@@ -119,7 +119,7 @@ RollingTotalVaccinated numeric
 
 Insert into #PercentPopulationVaccinated
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
-, SUM(CAST(vac.new_vaccinations as int)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingTotalVaccinated
+, SUM(CAST(vac.new_vaccinations as bigint)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingTotalVaccinated
 --, (RollingPeopleVaccinated/population)*100
 FROM PortfolioProject..CovidDeaths dea
 Join PortfolioProject..CovidVaccinations vac
@@ -134,7 +134,7 @@ FROM #PercentPopulationVaccinated
 --Creating View for visualizations
 CREATE VIEW PercentPopulationVaccinated as
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
-, SUM(CAST(vac.new_vaccinations as int)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingTotalVaccinated
+, SUM(CAST(vac.new_vaccinations as bigint)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingTotalVaccinated
 --, (RollingPeopleVaccinated/population)*100
 FROM PortfolioProject..CovidDeaths dea
 Join PortfolioProject..CovidVaccinations vac
@@ -142,5 +142,5 @@ Join PortfolioProject..CovidVaccinations vac
 	and dea.date = vac.date
 WHERE dea.continent is not null
 
-SELECT *
+SELECT *, (RollingTotalVaccinated/Population)*100
 FROM PercentPopulationVaccinated
